@@ -25,7 +25,7 @@ class Category
     private $title;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
      */
     private $description;
 
@@ -37,11 +37,11 @@ class Category
     /**
      * @ORM\ManyToMany(targetEntity=Article::class, mappedBy="category")
      */
-    private $author;
+    private $articles;
 
     public function __construct()
     {
-        $this->author = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -66,7 +66,7 @@ class Category
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -88,29 +88,30 @@ class Category
     /**
      * @return Collection<int, Article>
      */
-    public function getAuthor(): Collection
+    public function getArticles(): Collection
     {
-        return $this->author;
+        return $this->articles;
     }
 
-    public function addAuthor(Article $author): self
+    public function addArticle(Article $article): self
     {
-        if (!$this->author->contains($author)) {
-            $this->author[] = $author;
-            $author->addCategory($this);
+        if (!$this->articles->contains($article)) {
+            $this->articles[] = $article;
+            $article->addCategory($this);
         }
 
         return $this;
     }
 
-    public function removeAuthor(Article $author): self
+    public function removeArticle(Article $article): self
     {
-        if ($this->author->removeElement($author)) {
-            $author->removeCategory($this);
+        if ($this->articles->removeElement($article)) {
+            $article->removeCategory($this);
         }
 
         return $this;
     }
+
     public function __toString()
     {
         return $this->title;
