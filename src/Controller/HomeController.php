@@ -13,10 +13,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     private $repoArticle;
+    private $repoCategory;
 
-    public function __construct(ArticleRepository $repoArticle)
+    public function __construct(ArticleRepository $repoArticle, CategoryRepository $repoCategory)
     {
         $this->repoArticle = $repoArticle;
+        $this->repoCategory = $repoCategory;
     }
 
     /**
@@ -24,7 +26,7 @@ class HomeController extends AbstractController
      */
     public function index(CategoryRepository $repoCategory): Response
     {
-        $categories = $repoCategory->findAll();
+        $categories = $this->repoCategory->findAll();
         $articles = $this->repoArticle->findAll();
         return $this->render('home/index.html.twig', [
             "articles" => $articles,
@@ -54,9 +56,10 @@ class HomeController extends AbstractController
         } else {
             return $this->redirectToRoute("home");
         }
+        
         return $this->render('home/index.html.twig', [
             "articles" => $articles,
-            "categories" => $this->repoCategory->findAll(),
+            "categories" => $this->repoCategory->findAll()
         ]);
     }
 }
