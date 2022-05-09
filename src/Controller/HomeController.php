@@ -7,10 +7,11 @@ use App\Entity\Category;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
@@ -71,6 +72,36 @@ class HomeController extends AbstractController
         } else {
             return $this->redirectToRoute("home");
         }
+        return $this->render('home/index.html.twig', [
+            "articles" => $articlesPag,
+            "categories" => $this->repoCategory->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/recherche", name="recherche")
+     */
+    public function recherche(Request $request, PaginatorInterface $paginator): Response
+    {
+        $date = \DateTime::createFromFormat("Y-m-d", date($request->request->get('date')));
+        //dd($date);
+
+        $session = new Session();
+        if (!$session->get('articles')) {
+            $session->start();
+        }
+
+        if ($request->request->get('title')) {
+            $articles = $this->repoArticle->findByTitleLike($request->request->get('title'), $date);
+            $session->set('articles', $articles);
+        }
+
+        $articlesPag = $paginator->paginate(
+            $session->get('articles'), // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            6// Nombre de résultats par page
+        );
+
         return $this->render('home/index.html.twig', [
             "articles" => $articlesPag,
             "categories" => $this->repoCategory->findAll(),
