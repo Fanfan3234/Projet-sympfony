@@ -6,24 +6,19 @@
 
 	<div class="collapse navbar-collapse" id="navbarsExample02">
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item active">
-				<a href="{{ path('security_register', {user_type:"user"})}}" class="btn btn-success">
-					Inscription
-				</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="{{ path('admin')}}">Admin</a>
-			</li>
+
+
 			{% if app.user %}
 				<li>
 					<a href="{{ path('security_logout')}}" class="btn btn-danger ml-3">Déconnexion</a>
 				</li>
 			{% else %}
 				<li>
-					<a href="{{ path('security_register')}}" class="btn btn-success">Inscription</a>
+					<a href="{{ path('security_register')}}" class="btn btn-info">Inscription</a>
 				</li>
+				
 				<li>
-					<a href="{{ path('security_login')}}" class="btn btn-info ml-3">Connexion</a>
+					<a href="{{path('security_login')}}" class="btn btn-info">Connexion</a>
 				</li>
 			{% endif %}
 		</ul>
